@@ -29,7 +29,7 @@ jobs:
       - name: Build `nuxt` app
         run: |
           yarn install --frozen-lockfile
-          yarn nuxt-ts build
+          yarn nuxt-ts build --standalone
           yarn build:copy:ssr -v
         env:
           APP_ENV: development

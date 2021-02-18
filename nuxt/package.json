@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env APP_ENV=development nuxt-ts",
-    "build:dev": "cross-env APP_ENV=development nuxt-ts build && yarn build:copy:ssr",
+    "build:dev": "cross-env APP_ENV=development nuxt-ts build --standalone && yarn build:copy:ssr",
     "build:copy:ssr": "cpx \"./.nuxt/dist/**/*.*\" ../functions/ssr/dist -C",
     "start:dev": "cross-env APP_ENV=development nuxt-ts start",
     "serve": "firebase serve",
