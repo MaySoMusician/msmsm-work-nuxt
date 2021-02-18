@@ -1,5 +1,5 @@
 {
-  "name": "word2vec-visualizer-nuxt-functions",
+  "name": "msmsm-work-nuxt-functions",
   "scripts": {
     "build": "tsc",
     "serve": "npm run build && firebase serve --only functions",
