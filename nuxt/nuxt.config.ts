@@ -10,6 +10,19 @@ import {
 } from './userModules/constants'
 import firebaseConfig from './firebase.config'
 
+const generateLazyFontLinkTags = (preconnect: string, url: string) => {
+  return [
+    { rel: 'preconnect', href: preconnect, crossOrigin: 'anonymous' },
+    { rel: 'preload', as: 'style', href: url },
+    {
+      rel: 'stylesheet',
+      media: 'print',
+      onload: "this.media='all'",
+      href: url,
+    },
+  ]
+}
+
 const config: NuxtConfig = {
   // Change *source* directory (https://nuxtjs.org/api/configuration-srcdir/)
   // and *build* directory (https://nuxtjs.org/guides/directory-structure/nuxt/)
@@ -60,7 +73,13 @@ const config: NuxtConfig = {
         content: '@MaySoMusician',
       },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ...generateLazyFontLinkTags(
+        'https://fonts.gstatic.com',
+        'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap'
+      ),
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -91,6 +110,14 @@ const config: NuxtConfig = {
     '@nuxtjs/dayjs',
     'cookie-universal-nuxt',
     'nuxt-webfontloader',
+    [
+      'nuxt-lazy-load',
+      {
+        native: false,
+        directiveOnly: true,
+        polyfill: false,
+      },
+    ],
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
@@ -102,16 +129,16 @@ const config: NuxtConfig = {
     theme: {
       dark: false,
       themes: {
-        dark: {
-          primary: '#f61e20', // colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          anchor: '#00389e',
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3,
-        },
+        // dark: {
+        //   primary: '#f61e20', // colors.blue.darken2,
+        //   accent: colors.grey.darken3,
+        //   secondary: colors.amber.darken3,
+        //   anchor: '#00389e',
+        //   info: colors.teal.lighten1,
+        //   warning: colors.amber.base,
+        //   error: colors.deepOrange.accent4,
+        //   success: colors.green.accent3,
+        // },
         light: {
           primary: '#f61e20', // colors.blue.darken2,
           accent: colors.grey.darken3,
@@ -124,14 +151,19 @@ const config: NuxtConfig = {
         },
       },
       options: {
-        customProperties: true,
+        customProperties: false,
         variations: true,
+        minifyTheme: (css: string) =>
+          css.replace(/\n/g, '').replace(/\s\s+/g, ' '),
       },
     },
-    treeShake: true,
-    breakpoint: {
-      mobileBreakpoint: 1017,
+    defaultAssets: {
+      icons: false,
     },
+    icons: {
+      iconfont: 'mdiSvg',
+    },
+    treeShake: true,
   },
 
   // Firebase configuration (https://firebase.nuxtjs.org/guide/options)
@@ -139,6 +171,7 @@ const config: NuxtConfig = {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+    extractCSS: true,
     // extend() {},
   },
 
@@ -151,15 +184,6 @@ const config: NuxtConfig = {
   dayjs: {
     locales: ['ja'],
     defaultLocale: 'ja',
-  },
-
-  webfontloader: {
-    custom: {
-      families: ['Noto+Sans+JP:300,400,500,700'],
-      urls: [
-        'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap',
-      ],
-    },
   },
 
   pwa: {
@@ -176,7 +200,21 @@ const config: NuxtConfig = {
       display: 'fullscreen',
       lang: 'ja',
     },
+    workbox: {
+      runtimeCaching: [
+        {
+          urlPattern: 'https://fonts.gstatic.com/s/notosansjp/.*',
+          handler: 'StaleWhileRevalidate',
+        },
+        {
+          urlPattern: 'https://cdn.jsdelivr.net/npm/@mdi/font@latest/.*',
+          handler: 'StaleWhileRevalidate',
+        },
+      ],
+    },
   },
+
+  router: {},
 }
 
 /* if (process.env.LOCALHOST_SSL) {
