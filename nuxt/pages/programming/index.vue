@@ -62,8 +62,6 @@
 import Vue from 'vue'
 import { titlePerPage } from '@/userModules/constants'
 import { vxm } from '@/store/index'
-import FeaturedCardProgrammingProject from '@/components/FeaturedCardProgrammingProject.vue'
-import MyItemProgrammingProject from '@/components/MyItemProgrammingProject.vue'
 import { ProgrammingProjectFirebaseObject } from '@/store/modules/programmingProjects'
 
 type Data = {
@@ -76,10 +74,6 @@ type Computed = {
 }
 
 export default Vue.extend<Data, unknown, Computed, unknown>({
-  components: {
-    FeaturedCardProgrammingProject,
-    MyItemProgrammingProject,
-  },
   data() {
     return {
       projects: vxm.programmingProjects,
