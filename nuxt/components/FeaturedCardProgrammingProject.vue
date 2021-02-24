@@ -43,14 +43,14 @@
         <FeaturedCardChipNoActivable
           v-if="license"
           class="mr-1 Card-Info-Chip-NoActivable"
-          icon="mdi-file-outline"
+          :icon="mdiFileOutline"
           :text="licenseLabel"
         />
       </v-col>
       <v-col class="pb-1 mr-1" cols="auto">
         <FeaturedCardChipNoActivable
           class="mr-1 Card-Info-Chip-NoActivable"
-          icon="mdi-calendar-range"
+          :icon="mdiCalendarRange"
           :text="date"
         />
       </v-col>
@@ -63,16 +63,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import FeaturedCard from '@/components/FeaturedCard.vue'
-import FeaturedCardChipAuthorAndMyRole from '@/components/FeaturedCardChipAuthorAndMyRole.vue'
-import FeaturedCardChipNoActivable from '@/components/FeaturedCardChipNoActivable.vue'
-import FeaturedCardChipProjectUrl from '@/components/FeaturedCardChipProjectUrl.vue'
-import FeaturedCardChipRepository from '@/components/FeaturedCardChipRepository.vue'
-import VSkillIcon from '@/components/VSkillIcon.vue'
+import { mdiFileOutline, mdiCalendarRange } from '@mdi/js'
 import { License } from '@/types/store/common'
 import { ProgrammingProject } from '@/types/store/programmingProject'
 
-type Data = {}
+type Data = {
+  mdiFileOutline: string
+  mdiCalendarRange: string
+}
 
 type Methods = {}
 
@@ -99,14 +97,6 @@ type Props = {
 }
 
 export default Vue.extend<Data, Methods, Computed, Props>({
-  components: {
-    FeaturedCard,
-    FeaturedCardChipAuthorAndMyRole,
-    FeaturedCardChipNoActivable,
-    FeaturedCardChipProjectUrl,
-    FeaturedCardChipRepository,
-    VSkillIcon,
-  },
   props: {
     // Passed to the base component
     title: {
@@ -166,7 +156,10 @@ export default Vue.extend<Data, Methods, Computed, Props>({
     },
   },
   data() {
-    return {}
+    return {
+      mdiFileOutline,
+      mdiCalendarRange,
+    }
   },
   computed: {
     sortedSkills() {

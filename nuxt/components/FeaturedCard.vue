@@ -30,7 +30,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import VThumbnail from '@/components/VThumbnail.vue'
 
 type Props = {
   title: string
@@ -40,7 +39,6 @@ type Props = {
 }
 
 export default Vue.extend<unknown, unknown, unknown, Props>({
-  components: { VThumbnail },
   props: {
     title: {
       type: String,

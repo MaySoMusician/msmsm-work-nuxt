@@ -25,8 +25,8 @@
           <v-list-item-action class="my-0">
             <v-btn icon @click.stop="miniVariant = !miniVariant">
               <v-icon>
-                <template v-if="miniVariant">mdi-chevron-right</template>
-                <template v-else>mdi-chevron-left</template>
+                <template v-if="miniVariant">{{ mdiChevronRight }}</template>
+                <template v-else>{{ mdiChevronLeft }}</template>
               </v-icon>
             </v-btn>
           </v-list-item-action>
@@ -78,10 +78,20 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import {
+  mdiHome,
+  mdiAccountDetails,
+  mdiIframe,
+  mdiMusicClefBass,
+  mdiChevronLeft,
+  mdiChevronRight,
+} from '@mdi/js'
 
 type Data = {
   miniVariant: boolean
   items: { icon: string; title: string; to: string }[]
+  mdiChevronLeft: string
+  mdiChevronRight: string
 }
 
 type Props = {
@@ -100,22 +110,22 @@ export default Vue.extend<Data, unknown, unknown, Props>({
       miniVariant: false,
       items: [
         {
-          icon: 'mdi-home',
+          icon: mdiHome,
           title: 'ホーム',
           to: '/',
         },
         {
-          icon: 'mdi-account-details',
+          icon: mdiAccountDetails,
           title: 'プロフィール',
           to: '',
         },
         {
-          icon: 'mdi-iframe',
+          icon: mdiIframe,
           title: 'プログラミング',
           to: '/programming',
         },
         {
-          icon: 'mdi-music-clef-bass',
+          icon: mdiMusicClefBass,
           title: '音楽',
           to: '',
         },
@@ -125,6 +135,8 @@ export default Vue.extend<Data, unknown, unknown, Props>({
           to: '/feedback',
         }, */
       ],
+      mdiChevronLeft,
+      mdiChevronRight,
     }
   },
 })

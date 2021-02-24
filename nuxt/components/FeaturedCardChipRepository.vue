@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import VLinkableChip from '@/components/VLinkableChip.vue'
+import { mdiGithub, mdiTranslate } from '@mdi/js'
 import {
   ProgrammingProject,
   Repository,
@@ -36,7 +36,6 @@ type Props = {
 }
 
 export default Vue.extend<unknown, Methods, unknown, Props>({
-  components: { VLinkableChip },
   props: {
     repository: {
       type: Object as PropType<ProgrammingProject['repositories'][number]>,
@@ -46,9 +45,9 @@ export default Vue.extend<unknown, Methods, unknown, Props>({
   methods: {
     getRepositoryIcon(repository) {
       const icons: Record<RepositoryServiceName, string> = {
-        GITHUB: 'mdi-github',
+        GITHUB: mdiGithub,
         GITLAB: '',
-        TRANSIFEX: 'mdi-translate',
+        TRANSIFEX: mdiTranslate,
       }
 
       return icons[repository.serviceName]

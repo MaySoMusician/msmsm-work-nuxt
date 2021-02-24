@@ -19,7 +19,7 @@
           src="@/assets/icon03.svg"
         />
         <v-icon v-else-if="getAuthorIcon(author) === 'NONE'" size="16px">
-          mdi-account
+          {{ mdiAccount }}
         </v-icon>
       </v-avatar>
       {{ author }} </v-chip
@@ -30,8 +30,13 @@
 <script lang="ts">
 import Vue from 'vue'
 // import Icon03 from '@/assets/icon03.svg'
+import { mdiAccount } from '@mdi/js'
 
 type AuthorIcon = 'MAYSO' | 'KYOU' | 'NONE'
+
+type Data = {
+  mdiAccount: string
+}
 
 type Methods = {
   getAuthorIcon(value: string): AuthorIcon
@@ -42,7 +47,7 @@ type Props = {
   myRole: string
 }
 
-export default Vue.extend<unknown, Methods, unknown, Props>({
+export default Vue.extend<Data, Methods, unknown, Props>({
   components: {
     /* Icon03 */
   },
@@ -56,6 +61,11 @@ export default Vue.extend<unknown, Methods, unknown, Props>({
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      mdiAccount,
+    }
   },
   methods: {
     getAuthorIcon(value) {

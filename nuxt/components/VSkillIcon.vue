@@ -56,7 +56,7 @@ export default Vue.extend<Data, unknown, unknown, Props>({
   async mounted() {
     const simpleIcons = (
       await import(
-        /* webpackChunkName: "simpleicons", webpackPreload: true */ 'simple-icons'
+        /* webpackChunkName: "simpleicons", webpackPrefetch: true */ 'simple-icons'
       )
     ).default
     const icon = simpleIcons.get(this.value)
