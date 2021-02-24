@@ -68,10 +68,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import AttachmentEmbedHandler, {
-  AnyValue as AttachmentEmbedAnyValue,
-} from '@/components/AttachmentEmbedHandler.vue'
-import VYearBadge from '@/components/VYearBadge.vue'
+import { AnyValue as AttachmentEmbedAnyValue } from '@/components/AttachmentEmbedHandler.vue'
 
 type Data = {
   simpleRowProps: object
@@ -138,10 +135,6 @@ type TextWithBadge = { type: 'textWithBadge'; text: string; badge: string }
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   name: 'VJsonElement',
-  components: {
-    AttachmentEmbedHandler,
-    VYearBadge,
-  },
   props: {
     value: {
       type: Object as PropType<AnyValue>,
