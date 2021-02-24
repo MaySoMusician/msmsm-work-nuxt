@@ -1,35 +1,31 @@
 <template>
-  <EmbedSnippetSoundCloudTrack
+  <LazyEmbedSnippetSoundCloudTrack
     v-if="value.embedType === 'SoundCloudTrack'"
     v-bind="embedData"
   />
-  <EmbedSnippetSoundCloudPlaylist
+  <LazyEmbedSnippetSoundCloudPlaylist
     v-else-if="value.embedType === 'SoundCloudPlaylist'"
     v-bind="embedData"
   />
-  <EmbedSnippetYouTubeVideo
+  <LazyEmbedSnippetYouTubeVideo
     v-else-if="value.embedType === 'YouTubeVideo'"
+    v-bind="embedData"
+  />
+  <LazyVueTweetEmbed
+    v-else-if="value.embedType === 'TwitterTweet'"
     v-bind="embedData"
   />
   <!-- <EmbedSnippetTwitterTweet
     v-else-if="value.embedType === 'TwitterTweet'"
     v-bind="embedData"
   /> -->
-  <Tweet v-else-if="value.embedType === 'TwitterTweet'" v-bind="embedData" />
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { Tweet } from 'vue-tweet-embed'
 
-import EmbedSnippetSoundCloudTrack, {
-  Props as SoundCloudTrackPlayerProps,
-} from '@/components/EmbedSnippetSoundCloudTrack.vue'
-import EmbedSnippetSoundCloudPlaylist, {
-  Props as SoundCloudPlaylistPlayerProps,
-} from '@/components/EmbedSnippetSoundCloudPlaylist.vue'
-import EmbedSnippetYouTubeVideo from '@/components/EmbedSnippetYouTubeVideo.vue'
-// import EmbedSnippetTwitterTweet from '@/components/EmbedSnippetTwitterTweet.vue'
+import { Props as SoundCloudTrackPlayerProps } from '@/components/EmbedSnippetSoundCloudTrack.vue'
+import { Props as SoundCloudPlaylistPlayerProps } from '@/components/EmbedSnippetSoundCloudPlaylist.vue'
 
 type SoundCloudCommonProps = 'authorName' | 'authorSlug' | 'color' | 'height'
 
@@ -108,13 +104,6 @@ const soundcloudPlaylistCommon = {
 
 export default Vue.extend<Data, unknown, Computed, Props>({
   name: 'AttachmentEmbedHandler',
-  components: {
-    EmbedSnippetSoundCloudTrack,
-    EmbedSnippetSoundCloudPlaylist,
-    EmbedSnippetYouTubeVideo,
-    // EmbedSnippetTwitterTweet,
-    Tweet,
-  },
   props: {
     value: {
       type: Object as PropType<AnyValue>,

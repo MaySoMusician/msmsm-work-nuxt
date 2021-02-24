@@ -1,6 +1,7 @@
 <template>
   <div>
     <iframe
+      v-lazy-load
       width="100%"
       :height="height"
       scrolling="no"
@@ -12,7 +13,7 @@
     <div
       :style="{
         fontSize: '10px',
-        color: '#cccccc',
+        color: textColor,
         lineBreak: 'anywhere',
         wordBreak: 'normal',
         overflow: 'hidden',
@@ -27,7 +28,7 @@
         :href="`https://soundcloud.com/${authorSlug}`"
         :title="authorName"
         target="_blank"
-        style="color: #cccccc; text-decoration: none"
+        :style="{ color: textColor, textDecoration: 'none' }"
         >{{ authorName }}</a
       >
       ·
@@ -35,7 +36,7 @@
         :href="`https://soundcloud.com/${authorSlug}/${trackSlug}`"
         :title="trackTitle"
         target="_blank"
-        style="color: #cccccc; text-decoration: none"
+        :style="{ color: textColor, textDecoration: 'none' }"
         >{{ trackTitle }}</a
       >
     </div>
@@ -64,10 +65,14 @@ export type Props = {
   height: number
 }
 
+type Data = {
+  textColor: string
+}
+
 type Computed = {
   playerUrl: string
 }
-export default Vue.extend<unknown, unknown, Computed, Props>({
+export default Vue.extend<Data, unknown, Computed, Props>({
   props: {
     authorName: {
       type: String,
@@ -127,7 +132,9 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
     },
   },
   data() {
-    return {}
+    return {
+      textColor: '#767676',
+    }
   },
   computed: {
     playerUrl() {
