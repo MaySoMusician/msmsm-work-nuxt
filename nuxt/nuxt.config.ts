@@ -109,7 +109,6 @@ const config: NuxtConfig = {
     '@nuxtjs/pwa',
     '@nuxtjs/dayjs',
     'cookie-universal-nuxt',
-    'nuxt-webfontloader',
     [
       'nuxt-lazy-load',
       {
