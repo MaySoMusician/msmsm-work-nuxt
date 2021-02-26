@@ -30,7 +30,8 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn nuxt-ts build --standalone
-          yarn build:copy:ssr -v
+          yarn build:copy:server -v
+          yarn build:copy:client -v
         env:
           APP_ENV: development
         working-directory: ./nuxt

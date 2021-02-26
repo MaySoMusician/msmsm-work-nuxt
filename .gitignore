@@ -179,3 +179,4 @@ $RECYCLE.BIN/
 .node-version
 admin
 **/unlisted/*
+nuxt/static/_nuxt/*
