@@ -1,31 +1,46 @@
 <template>
-  <div v-if="value.type === 'table'">
+  <!--
+    Developer note: you should find weird syntax like `!!(typeof x !== 'string')`
+    You can't write `typeof x !== 'string'` in vue template, somehow because
+    the Vue interpreter can't properly recognize this correct syntax.
+    Although they can interpret `(typeof x !== 'string')`, with parentheses,
+    the great Prettier can't help automatically removing them.
+    So, I finally *created* an ultimate syntax `!!(typeof x !== 'string')`,
+    that prevents Prettier from formatting it, while letting Vue read it properly.
+
+    Tips: you can also use `!(typeof x === 'string')`, that will probably
+    make readers misunderstand easily though.
+  -->
+
+  <!-- First, handle non-object value (i.e. string passed to `value` prop) -->
+  <span v-if="typeof value === 'string'">{{ value }}</span>
+
+  <!-- Object AnyValue -->
+  <div v-else-if="value.type === 'table'">
     <v-row
       v-for="(row, index) in value.rows"
       :key="index"
       v-bind="simpleRowProps"
     >
       <v-col cols="1" :style="tableCeadingColStyle">
-        <span>{{ row.header }}</span>
+        <VJsonElement :value="row.header" />
       </v-col>
       <v-col>
-        <template v-if="!(typeof row.content === 'string')">
-          <VJsonElement :value="row.content" />
-        </template>
-        <span v-else>{{ row.content }}</span>
+        <VJsonElement :value="row.content" />
       </v-col>
     </v-row>
   </div>
+
   <ul v-else-if="value.type === 'list'" :style="listStyle">
     <li v-for="(item, index) in value.items" :key="index" class="mb-1">
-      <template v-if="!(typeof item === 'string')">
-        <span v-if="'pretext' in item">{{ item.pretext }}</span>
-        <span v-if="'precontent' in item"
-          ><VJsonElement :value="item.precontent"
-        /></span>
-        <VJsonElement :value="item" />
-      </template>
-      <span v-else>{{ item }}</span>
+      <!--
+        Prepend a content if an item has a `precontent` property
+        Useful for creating a nested list.
+      -->
+      <span v-if="!!(typeof item !== 'string') && 'precontent' in item"
+        ><VJsonElement :value="item.precontent"
+      /></span>
+      <VJsonElement :value="item" />
     </li>
   </ul>
 
@@ -35,9 +50,30 @@
       :key="index"
       v-bind="getAttachmentItemColProps(index)"
     >
-      <v-card v-bind="attachmentItemCardProps">
+      <!-- If an item is object and its `content` is a type of FeaturedCardValue, -->
+      <FeaturedCard
+        v-if="
+          !!(typeof item.content !== 'string') &&
+          'type' in item.content &&
+          item.content.type === 'featuredCard'
+        "
+        :title="item.description"
+        description=""
+        :thumbnail-url="item.content.thumbnailUrl"
+      >
+        <v-row align="center" no-gutters>
+          <v-col cols="12"></v-col>
+          <v-col v-if="item.year" cols="12">
+            <VYearBadge :text="item.year" />
+          </v-col>
+        </v-row>
+      </FeaturedCard>
+
+      <!-- Otherwise, -->
+      <v-card v-else v-bind="attachmentItemCardProps">
         <v-card-title class="JsonElement-Attachment-Title">
           <span>{{ item.description }}</span>
+          <!-- Append a badge if an item has a year info -->
           <VYearBadge
             v-if="item.year"
             class="JsonElement-Attachment-Year"
@@ -45,29 +81,48 @@
           />
         </v-card-title>
         <v-card-text>
+          <VJsonElement v-if="'precontent' in item" :value="item.precontent" />
+          <!-- If a content of an item is a type of AttachmentEmbedAnyValue, -->
           <AttachmentEmbedHandler
-            v-if="'embedType' in item.content"
+            v-if="
+              !!(typeof item.content !== 'string') &&
+              'embedType' in item.content
+            "
             :value="item.content"
           />
+          <!-- Otherwise, -->
           <VJsonElement v-else :value="item.content" />
         </v-card-text>
       </v-card>
     </v-col>
   </v-row>
 
-  <!-- Element types which cannot includes child elements -->
-  <nuxt-link v-else-if="value.type === 'link'" :to="value.to">{{
-    value.text
-  }}</nuxt-link>
-  <p v-else-if="value.type === 'sentence'">{{ value.text }}</p>
-  <span v-else-if="value.type === 'textWithBadge'"
-    >{{ value.text }} <VYearBadge :text="value.badge"
-  /></span>
-  <span v-else-if="typeof value === 'string'">{{ value }}</span>
+  <component
+    :is="value.wrapperTag || 'div'"
+    v-else-if="value.type === 'inlines'"
+    ><VJsonElement
+      v-for="(inline, index) in value.items"
+      :key="index"
+      :value="inline"
+    />
+  </component>
+
+  <!-- Notice: links can include only inline elements. -->
+  <nuxt-link v-else-if="value.type === 'link' && 'to' in value" :to="value.to"
+    ><VJsonElement :value="value.content"
+  /></nuxt-link>
+  <a v-else-if="value.type === 'link' && 'href' in value" :href="value.href"
+    ><VJsonElement :value="value.content"
+  /></a>
+
+  <!-- These types of elements below can't include any child VJsonElements. -->
+  <p v-else-if="value.type === 'paragraph'">{{ value.text }}</p>
+  <VYearBadge v-else-if="value.type === 'badge'" :text="value.text" />
+  <span v-else-if="value.type === 'plaintext'">{{ value.text }}</span>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
+import Vue /* , { PropType } */ from 'vue'
 import { AnyValue as AttachmentEmbedAnyValue } from '@/components/AttachmentEmbedHandler.vue'
 
 type Data = {
@@ -90,20 +145,24 @@ type Props = {
 
 // ******************************************************** //
 
-type AnyValue =
+type AnyValue = AnyBlockElementValue | AnyInlineElementValue | string
+
+type AnyBlockElementValue =
   | TableValue
   | ListValue
   | AttachmentsValue
-  | LinkValue
-  | SentenceValue
-  | TextWithBadge
+  | ParagraphValue
+  | FeaturedCardValue
+  | InlinesValue
+
+type AnyInlineElementValue = LinkValue | PlainTextValue | BadgeValue
 
 type TableValue = {
   type: 'table'
   options?: {
     headerFlexBasis?: string
   }
-  rows: { header: string; content: string | AnyValue }[]
+  rows: { header: AnyValue; content: AnyValue }[]
 }
 
 type ListValue = {
@@ -111,8 +170,9 @@ type ListValue = {
   options?: {
     noBulletList?: boolean
   }
-  items: (string | AnyValue)[]
-} & ({ pretext?: string } | { precontent?: AnyValue })
+  precontent?: AnyValue
+  items: AnyValue[]
+}
 
 type AttachmentsValue = {
   type: 'attachments'
@@ -121,15 +181,32 @@ type AttachmentsValue = {
     description: string
     year: string
     content: AnyValue | AttachmentEmbedAnyValue
+    precontent?: AnyValue
     options?: { span?: number }
   }[]
 }
 
-type LinkValue = { type: 'link'; to: string; text: string }
+type FeaturedCardValue = {
+  type: 'featuredCard'
+  thumbnailUrl: string
+}
 
-type SentenceValue = { type: 'sentence'; text: string }
+type InlinesValue = {
+  type: 'inlines'
+  wrapperTag?: string
+  items: AnyInlineElementValue[]
+}
 
-type TextWithBadge = { type: 'textWithBadge'; text: string; badge: string }
+type LinkValue = {
+  type: 'link'
+  content: AnyInlineElementValue | InlinesValue
+} & ({ to: string } | { href: string })
+
+type ParagraphValue = { type: 'paragraph'; text: string }
+
+type BadgeValue = { type: 'badge'; text: string }
+
+type PlainTextValue = { type: 'plaintext'; text: string }
 
 // ******************************************************** //
 
@@ -137,7 +214,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   name: 'VJsonElement',
   props: {
     value: {
-      type: Object as PropType<AnyValue>,
+      type: [String, Object as () => Exclude<AnyValue, string>],
       required: true,
     },
   },
@@ -158,7 +235,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   computed: {
     tableCeadingColStyle() {
-      if (this.value.type !== 'table') {
+      if (typeof this.value === 'string' || this.value.type !== 'table') {
         return {}
       }
 
@@ -168,7 +245,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
       }
     },
     listStyle() {
-      if (this.value.type !== 'list') {
+      if (typeof this.value === 'string' || this.value.type !== 'list') {
         return {}
       }
 
@@ -186,7 +263,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
   },
   methods: {
     getAttachmentItemColProps(_index: number) {
-      if (this.value.type !== 'attachments') {
+      if (typeof this.value === 'string' || this.value.type !== 'attachments') {
         return {}
       }
 
