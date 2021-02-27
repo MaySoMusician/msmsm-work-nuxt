@@ -43,7 +43,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import TheNavigationLeft from '@/components/TheNavigationLeft.vue'
 import { store } from '@/store/index'
 import { websiteCopyright, baseUrl } from '@/userModules/constants'
 import Icon03 from '@/assets/icon03.svg?inline'
@@ -59,7 +58,7 @@ type Computed = {
 }
 
 export default Vue.extend<Data, unknown, Computed, unknown>({
-  components: { TheNavigationLeft, Icon03 },
+  components: { Icon03 },
   async asyncData() {
     if (process.browser) return
     try {
