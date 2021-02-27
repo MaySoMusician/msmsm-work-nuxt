@@ -1,18 +1,10 @@
 <template>
-  <!-- <iframe
-    v-lazy-load
-    width="100%"
-    :height="height"
-    :src="playerUrl"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe> -->
   <div ref="Player" class="EmbedYouTubeVideo"></div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { mdiPlay } from '@mdi/js'
 
 export type Props = {
   id: string
@@ -49,35 +41,88 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
   mounted() {
     // Based on https://www.labnol.org/internet/light-youtube-embeds/27941/
     const playerElement = this.$refs.Player as HTMLDivElement
-    console.log(playerElement.dataset)
 
     const videoId = this.id
-    const div = document.createElement('div')
 
-    const thumbnailNode = document.createElement('img')
-    thumbnailNode.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
-    thumbnailNode.setAttribute('loading', 'lazy')
-    thumbnailNode.setAttribute('alt', `${videoId}の YouTube 動画`)
-    div.appendChild(thumbnailNode)
+    const setAttributes = (
+      element: HTMLElement | SVGElement,
+      attributes: Record<string, string>
+    ) => {
+      for (const [name, value] of Object.entries(attributes)) {
+        element.setAttribute(name, value)
+      }
+    }
 
-    const playButton = document.createElement('div')
-    playButton.classList.add('play')
-    div.appendChild(playButton)
+    playerElement.appendChild(
+      (() => {
+        const div = document.createElement('div')
 
-    const src = this.playerUrl
-    div.addEventListener('click', function () {
-      const iframe = document.createElement('iframe')
-      iframe.setAttribute('src', src)
-      iframe.setAttribute('frameborder', '0')
-      iframe.setAttribute('allowfullscreen', '1')
-      iframe.setAttribute(
-        'allow',
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-      )
-      iframe.setAttribute('loading', 'lazy')
-      this.parentNode?.replaceChild(iframe, this)
-    })
-    playerElement.appendChild(div)
+        const src = this.playerUrl
+        div.addEventListener('click', function () {
+          const iframe = document.createElement('iframe')
+          setAttributes(iframe, {
+            src,
+            frameborder: '0',
+            allowfullscreen: '1',
+            allow:
+              'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+            loading: 'lazy',
+          })
+          this.parentNode?.replaceChild(iframe, this)
+        })
+
+        div.appendChild(
+          (() => {
+            const thumbnail = document.createElement('img')
+            thumbnail.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+            setAttributes(thumbnail, {
+              loading: 'lazy',
+              alt: `${videoId}の YouTube 動画`,
+            })
+            return thumbnail
+          })()
+        )
+
+        div.appendChild(
+          (() => {
+            const playButton = document.createElement('div')
+            playButton.classList.add('play')
+
+            playButton.appendChild(
+              (() => {
+                const svg = document.createElementNS(
+                  'http://www.w3.org/2000/svg',
+                  'svg'
+                )
+                setAttributes(svg, {
+                  viewBox: '0 0 24 24',
+                  role: 'img',
+                  'aria-hidden': 'true',
+                  xmlns: 'http://www.w3.org/2000/svg',
+                })
+
+                svg.appendChild(
+                  (() => {
+                    const path = document.createElementNS(
+                      'http://www.w3.org/2000/svg',
+                      'path'
+                    )
+                    setAttributes(path, {
+                      d: mdiPlay,
+                      fill: '#ffffff',
+                    })
+                    return path
+                  })()
+                )
+                return svg
+              })()
+            )
+            return playButton
+          })()
+        )
+        return div
+      })()
+    )
   },
 })
 </script>
@@ -85,12 +130,12 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
 <style lang="scss" scoped>
 .EmbedYouTubeVideo {
   position: relative;
-  padding-bottom: 56.25%;
   height: 0;
-  overflow: hidden;
   max-width: 100%;
-  background: #000;
   margin: 5px;
+  padding-bottom: 56.25%;
+  overflow: hidden;
+  background: #000;
 
   ::v-deep iframe {
     position: absolute;
@@ -103,19 +148,21 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
   }
 
   ::v-deep img {
-    object-fit: cover;
     display: block;
+    position: absolute;
+    top: 0;
     left: 0;
     bottom: 0;
+    right: 0;
+
     margin: auto;
     max-width: 100%;
     width: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    border: none;
     height: auto;
+
+    border: none;
     cursor: pointer;
+    object-fit: cover;
     transition: 0.4s all;
 
     &:hover {
@@ -123,15 +170,23 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
     }
   }
 
+  $playButtonHeight: 64px;
+  $playButtonWidth: 72px;
+
+  ::v-deep .play,
+  ::v-deep .play > svg {
+    height: $playButtonHeight;
+    width: $playButtonWidth;
+  }
+
   ::v-deep .play {
-    height: 72px;
-    width: 72px;
-    left: 50%;
     top: 50%;
-    margin-left: -36px;
-    margin-top: -36px;
+    left: 50%;
+    margin-top: -($playButtonHeight / 2);
+    margin-left: -($playButtonWidth / 2);
     position: absolute;
-    background: url('https://i.imgur.com/TxzC70f.png') no-repeat;
+    background: #212121cc;
+    border-radius: 5px;
     cursor: pointer;
   }
 }
