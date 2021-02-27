@@ -15,10 +15,10 @@
     v-else-if="value.embedType === 'TwitterTweet'"
     v-bind="embedData"
   />
-  <!-- <EmbedSnippetTwitterTweet
-    v-else-if="value.embedType === 'TwitterTweet'"
+  <LazyEmbedSnippetGoogleDrive
+    v-else-if="value.embedType === 'GoogleDrive'"
     v-bind="embedData"
-  /> -->
+  />
 </template>
 
 <script lang="ts">
@@ -60,7 +60,11 @@ type Props = {
 
 // ******************************************************** //
 
-export type AnyValue = SoundCloudValue | YouTubeVideoValue | TwitterTweetValue
+export type AnyValue =
+  | SoundCloudValue
+  | YouTubeVideoValue
+  | TwitterTweetValue
+  | GoogleDriveValue
 
 export type SoundCloudValue = {
   embedType: 'SoundCloudTrack' | 'SoundCloudPlaylist'
@@ -77,7 +81,12 @@ export type YouTubeVideoValue = {
 
 export type TwitterTweetValue = {
   embedType: 'TwitterTweet'
-  // code: string
+  id: string
+  options?: object
+}
+
+export type GoogleDriveValue = {
+  embedType: 'GoogleDrive'
   id: string
 }
 
@@ -163,13 +172,18 @@ export default Vue.extend<Data, unknown, Computed, Props>({
 
       if (this.value.embedType === 'TwitterTweet') {
         return {
-          // code: this.value.code,
           id: this.value.id,
           options: {
             conversation: 'none',
             lang: 'ja',
             dnt: true,
           },
+        }
+      }
+
+      if (this.value.embedType === 'GoogleDrive') {
+        return {
+          id: this.value.id,
         }
       }
 
