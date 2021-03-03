@@ -15,8 +15,12 @@
     v-else-if="value.embedType === 'TwitterTweet'"
     v-bind="embedData"
   />
-  <LazyEmbedSnippetGoogleDrive
-    v-else-if="value.embedType === 'GoogleDrive'"
+  <LazyEmbedSnippetGoogleDrivePreview
+    v-else-if="value.embedType === 'GoogleDrive' && value.preview"
+    v-bind="embedData"
+  />
+  <LazyEmbedSnippetGoogleDriveLinked
+    v-else-if="value.embedType === 'GoogleDrive' && !value.preview"
     v-bind="embedData"
   />
 </template>
@@ -88,7 +92,7 @@ export type TwitterTweetValue = {
 export type GoogleDriveValue = {
   embedType: 'GoogleDrive'
   id: string
-}
+} & ({ preview: true } | { preview: false; thumbnailUrl: string })
 
 // ******************************************************** //
 
@@ -182,8 +186,15 @@ export default Vue.extend<Data, unknown, Computed, Props>({
       }
 
       if (this.value.embedType === 'GoogleDrive') {
-        return {
-          id: this.value.id,
+        if (this.value.preview) {
+          return {
+            id: this.value.id,
+          }
+        } else {
+          return {
+            id: this.value.id,
+            thumbnailUrl: this.value.thumbnailUrl,
+          }
         }
       }
 
