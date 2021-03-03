@@ -111,7 +111,11 @@
   <nuxt-link v-else-if="value.type === 'link' && 'to' in value" :to="value.to"
     ><VJsonElement :value="value.content"
   /></nuxt-link>
-  <a v-else-if="value.type === 'link' && 'href' in value" :href="value.href"
+  <a
+    v-else-if="value.type === 'link' && 'href' in value"
+    :href="value.href"
+    rel="noopener"
+    target="_blank"
     ><VJsonElement :value="value.content"
   /></a>
 
