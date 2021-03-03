@@ -1,5 +1,11 @@
 <template>
-  <div ref="Player" class="EmbedYouTubeVideo"></div>
+  <v-hover #default="{ hover }">
+    <div
+      ref="Player"
+      class="EmbedYouTubeVideo"
+      :class="{ 'EmbedYouTubeVideo-Hovered': hover }"
+    ></div>
+  </v-hover>
 </template>
 
 <script lang="ts">
@@ -86,7 +92,7 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
         div.appendChild(
           (() => {
             const playButton = document.createElement('div')
-            playButton.classList.add('play')
+            playButton.classList.add('EmbedYouTubeVideo-PlayButton')
 
             playButton.appendChild(
               (() => {
@@ -133,61 +139,73 @@ export default Vue.extend<unknown, unknown, Computed, Props>({
   height: 0;
   max-width: 100%;
   margin: 5px;
-  padding-bottom: 56.25%;
+  padding-bottom: 54.6%;
   overflow: hidden;
   background: #000;
 
-  ::v-deep iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: auto;
-    background: transparent;
-  }
+  ::v-deep {
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: auto;
+      background: transparent;
+    }
 
-  ::v-deep img {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+    img,
+    .EmbedYouTubeVideo-PlayButton {
+      cursor: pointer;
+      transition: 0.4s all;
+    }
 
-    margin: auto;
-    max-width: 100%;
-    width: 100%;
-    height: auto;
+    img {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
 
-    border: none;
-    cursor: pointer;
-    object-fit: cover;
-    transition: 0.4s all;
+      margin: auto;
+      max-width: 100%;
+      width: 100%;
+      height: auto;
 
-    &:hover {
-      filter: brightness(75%);
+      border: none;
+      object-fit: cover;
+    }
+
+    $playButtonHeight: 64px;
+    $playButtonWidth: 72px;
+
+    .EmbedYouTubeVideo-PlayButton {
+      top: 50%;
+      left: 50%;
+      margin-top: -($playButtonHeight / 2);
+      margin-left: -($playButtonWidth / 2);
+      position: absolute;
+      background: #212121cc;
+      border-radius: 5px;
+
+      &,
+      & > svg {
+        height: $playButtonHeight;
+        width: $playButtonWidth;
+      }
     }
   }
+}
 
-  $playButtonHeight: 64px;
-  $playButtonWidth: 72px;
-
-  ::v-deep .play,
-  ::v-deep .play > svg {
-    height: $playButtonHeight;
-    width: $playButtonWidth;
+.EmbedYouTubeVideo-Hovered ::v-deep {
+  img,
+  .EmbedYouTubeVideo-PlayButton {
+    filter: brightness(120%);
   }
 
-  ::v-deep .play {
-    top: 50%;
-    left: 50%;
-    margin-top: -($playButtonHeight / 2);
-    margin-left: -($playButtonWidth / 2);
-    position: absolute;
-    background: #212121cc;
-    border-radius: 5px;
-    cursor: pointer;
+  img {
+    transform: scale(1.03);
   }
 }
 </style>
