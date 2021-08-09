@@ -173,6 +173,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         MIT: 'MIT License',
         PD: 'Public Domain',
         UNLICENSED: 'All rights reserved',
+        MPL2: 'Mozilla Public License 2.0',
       }
       return labels[this.license]
     },

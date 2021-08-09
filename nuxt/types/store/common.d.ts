@@ -15,7 +15,7 @@ export interface Description {
   full: string
 }
 
-export type License = 'CC-BY-4.0' | 'MIT' | 'PD' | 'UNLICENSED'
+export type License = 'CC-BY-4.0' | 'MIT' | 'PD' | 'UNLICENSED' | 'MPL2'
 
 export interface Featureable {
   featured: boolean
