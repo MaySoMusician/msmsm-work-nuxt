@@ -82,6 +82,9 @@ export default Vue.extend<Data, unknown, Computed, Props>({
   overflow: hidden;
   background: #000;
 
+  box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 3px 0px rgba(0, 0, 0, 0.12);
+
   &-Linkable {
     position: absolute;
     top: 0;
