@@ -62,9 +62,23 @@
         :thumbnail-url="item.content.thumbnailUrl"
       >
         <v-row align="center" no-gutters>
-          <v-col cols="12"></v-col>
-          <v-col v-if="item.year" cols="12">
-            <VYearBadge :text="item.year" />
+          <v-col cols="12">
+            <VYearBadge v-if="item.year" :text="item.year" />
+            <template v-if="item.content.external">
+              <VLinkableChip
+                v-for="(externalItem, externalIndex) in item.content.external"
+                :key="externalIndex"
+                class="mr-1"
+                v-bind="$attrs"
+                :icon="mdiOpenInNew"
+                icon-color="#000000a1"
+                :label="externalItem.label"
+                :url="externalItem.url"
+              />
+            </template>
+          </v-col>
+          <v-col v-if="item.content.comment" cols="12">
+            <VJsonElement :value="item.content.comment" />
           </v-col>
         </v-row>
       </FeaturedCard>
@@ -127,11 +141,13 @@
 
 <script lang="ts">
 import Vue /* , { PropType } */ from 'vue'
+import { mdiOpenInNew } from '@mdi/js'
 import { AnyValue as AttachmentEmbedAnyValue } from '@/components/AttachmentEmbedHandler.vue'
 
 type Data = {
   simpleRowProps: object
   attachmentItemCardProps: object
+  mdiOpenInNew: string
 }
 
 type Methods = {
@@ -193,6 +209,8 @@ type AttachmentsValue = {
 type FeaturedCardValue = {
   type: 'featuredCard'
   thumbnailUrl: string
+  comment?: AnyInlineElementValue | InlinesValue
+  external?: { label: string; url: string }[]
 }
 
 type InlinesValue = {
@@ -216,6 +234,7 @@ type PlainTextValue = { type: 'plaintext'; text: string }
 
 export default Vue.extend<Data, Methods, Computed, Props>({
   name: 'VJsonElement',
+  components: {},
   props: {
     value: {
       type: [String, Object as () => Exclude<AnyValue, string>],
@@ -235,6 +254,7 @@ export default Vue.extend<Data, Methods, Computed, Props>({
         color: 'white',
         height: '100%',
       },
+      mdiOpenInNew,
     }
   },
   computed: {
