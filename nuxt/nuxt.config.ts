@@ -12,14 +12,14 @@ import firebaseConfig from './firebase.config'
 
 const generateLazyFontLinkTags = (preconnect: string, url: string) => {
   return [
-    { rel: 'preconnect', href: preconnect, crossOrigin: 'anonymous' },
     { rel: 'preload', as: 'style', href: url },
     {
       rel: 'stylesheet',
-      media: 'print',
-      onload: "this.media='all'",
+      media: 'all',
+      // onload: "this.media='all'",
       href: url,
     },
+    { rel: 'preconnect', href: preconnect, crossOrigin: 'anonymous' },
   ]
 }
 
