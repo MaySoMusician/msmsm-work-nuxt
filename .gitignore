@@ -179,4 +179,5 @@ $RECYCLE.BIN/
 .node-version
 admin
 **/unlisted/*
+!**/unlisted/_id.vue
 nuxt/static/_nuxt/*
