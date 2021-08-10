@@ -172,6 +172,11 @@ const config: NuxtConfig = {
   build: {
     extractCSS: true,
     // extend() {},
+    babel: {
+      plugins: [
+        ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
+      ],
+    },
   },
 
   generate: {
