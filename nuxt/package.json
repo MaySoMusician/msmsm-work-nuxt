@@ -26,7 +26,7 @@
     "cpx": "^1.5.0",
     "firebase": "^7.23.0",
     "ityped": "^1.0.3",
-    "nuxt": "^2.14.6",
+    "nuxt": "^2.15.8",
     "nuxt-lazy-load": "^1.2.5",
     "simple-icons": "^5.9.0",
     "vue-lazy-hydration": "^2.0.0-beta.4",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@mdi/js": "^5.9.55",
-    "@nuxt/types": "^2.14.6",
+    "@nuxt/types": "^2.15.8",
     "@nuxt/typescript-build": "^2.0.3",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
